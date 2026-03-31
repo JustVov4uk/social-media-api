@@ -38,7 +38,12 @@ class UserManager(DjangoUserManager):
 
 class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
-
+    following = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="followers",
+        blank=True,
+    )
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
