@@ -37,6 +37,7 @@ class UserManager(DjangoUserManager):
 
 
 class User(AbstractUser):
+    username = models.CharField(max_length=50, blank=True, null=True, unique=False)
     email = models.EmailField(_("email address"), unique=True)
     following = models.ManyToManyField(
         "self",
