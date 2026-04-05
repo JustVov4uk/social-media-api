@@ -1,8 +1,9 @@
 from rest_framework import viewsets, generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from user.serializers import UserSerializer, UserRegisterSerializer
+from user.serializers import UserSerializer, UserRegisterSerializer, ProfileSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -18,3 +19,11 @@ class LogoutView(generics.GenericAPIView):
         token = RefreshToken(request.data["refresh"])
         token.blacklist()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RetrieveUpdateProfileAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user.profile
