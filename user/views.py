@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated
@@ -37,3 +38,17 @@ class RetrieveProfileAPIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return get_object_or_404(Profile, user=self.kwargs["pk"])
+
+
+class ListProfileAPIView(generics.ListAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = Profile.objects.all()
+        search = self.request.query_params.get("search", None)
+        if search:
+            queryset = queryset.filter(
+                Q(user__username__icontains=search) | Q(user__email__icontains=search)
+            )
+        return queryset
